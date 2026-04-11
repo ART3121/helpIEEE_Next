@@ -51,6 +51,7 @@ function isCurrentContentRoute(route) {
 
 const currentContentRoute = contentPageRoutes.find((route) => isCurrentContentRoute(route));
 const currentRouteLabel = currentContentRoute ? (currentContentRoute.sidebarLabel || currentContentRoute.label) : 'Esta página';
+const currentRouteIcon = currentContentRoute?.icon || '../assets/icons/document.svg';
 
 const academicCalendarLegendMap = {
   inicio: { label: 'Marco letivo' },
@@ -580,9 +581,14 @@ function mountPageSidebar() {
         <p class="page-sidebar__desc">Troque de página sem voltar para a home e mantenha o guia sempre por perto.</p>
 
         <div class="page-sidebar__current">
-          <span class="page-sidebar__group-label">Você está em</span>
-          <strong class="page-sidebar__current-title">${currentRouteLabel}</strong>
-          <span class="page-sidebar__current-meta">${currentRouteMeta}</span>
+          <span class="page-sidebar__current-badge" aria-hidden="true">
+            <img src="${currentRouteIcon}" alt="" class="icon-svg">
+          </span>
+          <div class="page-sidebar__current-copy">
+            <span class="page-sidebar__group-label">Você está em</span>
+            <strong class="page-sidebar__current-title">${currentRouteLabel}</strong>
+            <span class="page-sidebar__current-meta">${currentRouteMeta}</span>
+          </div>
         </div>
 
         <nav class="page-sidebar__nav" aria-label="Páginas do guia">

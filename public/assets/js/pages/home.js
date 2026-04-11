@@ -37,12 +37,11 @@ const homeSidebarMobileTrigger = document.getElementById('home-sidebar-mobile-tr
 const navSidebarTrigger = document.getElementById('nav-sidebar-trigger');
 const heroSidebarTrigger = document.getElementById('hero-sidebar-trigger');
 const compactSidebarQuery = window.matchMedia('(max-width: 1100px)');
-const homeSidebarStorageKey = 'helpieee-site-sidebar-collapsed';
-const legacyHomeSidebarStorageKey = 'helpieee-home-sidebar-collapsed';
+const homeSidebarStorageKey = 'helpieee-home-sidebar-hidden';
 const homeNavLinks = document.querySelector('.nav-links');
 const homeNav = document.querySelector('nav');
 
-let homeSidebarCollapsed = false;
+let homeSidebarHidden = true;
 let homeSidebarOpen = false;
 const homeSidebarTooltipHideDelay = 120;
 const homeSearchHighlightDuration = 1800;
@@ -690,29 +689,29 @@ if (homeSidebar) {
 
   try {
     const savedSidebarState = window.localStorage.getItem(homeSidebarStorageKey);
-    homeSidebarCollapsed = savedSidebarState
-      ? savedSidebarState === 'true'
-      : window.localStorage.getItem(legacyHomeSidebarStorageKey) === 'true';
+    homeSidebarHidden = savedSidebarState === null ? true : savedSidebarState === 'true';
   } catch (error) {
-    homeSidebarCollapsed = false;
+    homeSidebarHidden = true;
   }
 
   const syncHomeSidebar = () => {
     const isCompact = compactSidebarQuery.matches;
+    const isSidebarVisible = isCompact ? homeSidebarOpen : !homeSidebarHidden;
 
-    bodyElement.classList.toggle('sidebar-collapsed', !isCompact && homeSidebarCollapsed);
+    bodyElement.classList.toggle('sidebar-hidden', !isCompact && homeSidebarHidden);
     bodyElement.classList.toggle('sidebar-open', isCompact && homeSidebarOpen);
 
-    homeSidebar.setAttribute('aria-hidden', String(isCompact && !homeSidebarOpen));
+    homeSidebar.setAttribute('aria-hidden', String(!isSidebarVisible));
+    homeSidebar.toggleAttribute('inert', !isSidebarVisible);
 
     if (homeSidebarToggle) {
-      const expanded = isCompact ? homeSidebarOpen : !homeSidebarCollapsed;
+      const expanded = isSidebarVisible;
       homeSidebarToggle.setAttribute('aria-expanded', String(expanded));
       homeSidebarToggle.setAttribute(
         'aria-label',
         isCompact
           ? (homeSidebarOpen ? 'Fechar atalhos' : 'Abrir atalhos')
-          : (homeSidebarCollapsed ? 'Expandir atalhos' : 'Recolher atalhos'),
+          : (homeSidebarHidden ? 'Mostrar atalhos' : 'Ocultar atalhos'),
       );
     }
 
@@ -729,7 +728,7 @@ if (homeSidebar) {
 
   const persistSidebarState = () => {
     try {
-      window.localStorage.setItem(homeSidebarStorageKey, String(homeSidebarCollapsed));
+      window.localStorage.setItem(homeSidebarStorageKey, String(homeSidebarHidden));
     } catch (error) {
       // Ignore storage failures and keep only the in-memory state.
     }
@@ -739,7 +738,7 @@ if (homeSidebar) {
     if (compactSidebarQuery.matches) {
       homeSidebarOpen = true;
     } else {
-      homeSidebarCollapsed = false;
+      homeSidebarHidden = false;
       persistSidebarState();
     }
 
@@ -759,7 +758,7 @@ if (homeSidebar) {
     if (compactSidebarQuery.matches) {
       homeSidebarOpen = !homeSidebarOpen;
     } else {
-      homeSidebarCollapsed = !homeSidebarCollapsed;
+      homeSidebarHidden = !homeSidebarHidden;
       persistSidebarState();
     }
 

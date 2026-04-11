@@ -69,9 +69,9 @@ const infoBar = document.getElementById('info-bar');
 const curriculumSelect = document.getElementById('curriculum-select');
 const topbarNav = document.querySelector('.topbar-nav');
 const searchHighlightDuration = 1800;
-const pageSidebarStorageKey = 'helpieee-site-sidebar-collapsed';
-const legacySidebarStorageKey = 'helpieee-home-sidebar-collapsed';
+const pageSidebarStorageKey = 'helpieee-flow-sidebar-hidden';
 const sidebarTooltipHideDelay = 120;
+const discTooltipHoverQuery = window.matchMedia('(min-width: 901px) and (hover: hover) and (pointer: fine)');
 
 const flowSidebarSpotlightRoute = {
   href: 'materiais.html',
@@ -116,14 +116,9 @@ if (isHomeEmbed && bodyElement) {
 function readSavedSidebarState() {
   try {
     const savedState = window.localStorage.getItem(pageSidebarStorageKey);
-
-    if (savedState === 'true' || savedState === 'false') {
-      return savedState === 'true';
-    }
-
-    return window.localStorage.getItem(legacySidebarStorageKey) === 'true';
+    return savedState === null ? true : savedState === 'true';
   } catch (error) {
-    return false;
+    return true;
   }
 }
 
@@ -354,26 +349,41 @@ function mountFlowSidebar() {
   const pageSidebarMobileTrigger = document.getElementById('page-sidebar-mobile-trigger');
   const compactSidebarQuery = window.matchMedia('(max-width: 1180px)');
   const syncSidebarTooltips = initSidebarTooltips(pageSidebar, compactSidebarQuery);
+  let desktopSidebarTrigger = null;
 
-  let pageSidebarCollapsed = readSavedSidebarState();
+  if (topbarNav && !isHomeEmbed) {
+    desktopSidebarTrigger = document.createElement('button');
+    desktopSidebarTrigger.type = 'button';
+    desktopSidebarTrigger.className = 'topbar-sidebar-trigger';
+    desktopSidebarTrigger.id = 'flow-topbar-sidebar-trigger';
+    desktopSidebarTrigger.innerHTML = `
+      <span class="topbar-sidebar-trigger__icon" aria-hidden="true"></span>
+      <span class="topbar-sidebar-trigger__label">Mostrar atalhos</span>
+    `;
+    topbarNav.insertBefore(desktopSidebarTrigger, topbarNav.firstChild);
+  }
+
+  let pageSidebarHidden = readSavedSidebarState();
   let pageSidebarOpen = false;
 
   const syncPageSidebar = () => {
     const isCompact = compactSidebarQuery.matches;
+    const isSidebarVisible = isCompact ? pageSidebarOpen : !pageSidebarHidden;
 
-    bodyElement.classList.toggle('page-sidebar-collapsed', !isCompact && pageSidebarCollapsed);
+    bodyElement.classList.toggle('page-sidebar-hidden', !isCompact && pageSidebarHidden);
     bodyElement.classList.toggle('page-sidebar-open', isCompact && pageSidebarOpen);
 
-    pageSidebar?.setAttribute('aria-hidden', String(isCompact && !pageSidebarOpen));
+    pageSidebar?.setAttribute('aria-hidden', String(!isSidebarVisible));
+    pageSidebar?.toggleAttribute('inert', !isSidebarVisible);
 
     if (pageSidebarToggle) {
-      const expanded = isCompact ? pageSidebarOpen : !pageSidebarCollapsed;
+      const expanded = isSidebarVisible;
       pageSidebarToggle.setAttribute('aria-expanded', String(expanded));
       pageSidebarToggle.setAttribute(
         'aria-label',
         isCompact
           ? (pageSidebarOpen ? 'Fechar atalhos' : 'Abrir atalhos')
-          : (pageSidebarCollapsed ? 'Expandir atalhos' : 'Recolher atalhos'),
+          : (pageSidebarHidden ? 'Mostrar atalhos' : 'Ocultar atalhos'),
       );
     }
 
@@ -385,6 +395,19 @@ function mountFlowSidebar() {
       pageSidebarBackdrop.hidden = !(isCompact && pageSidebarOpen);
     }
 
+    if (desktopSidebarTrigger) {
+      desktopSidebarTrigger.hidden = isCompact;
+      desktopSidebarTrigger.setAttribute('aria-expanded', String(!isCompact && !pageSidebarHidden));
+      desktopSidebarTrigger.setAttribute('aria-label', pageSidebarHidden ? 'Mostrar atalhos' : 'Ocultar atalhos');
+      desktopSidebarTrigger.classList.toggle('is-active', !isCompact && !pageSidebarHidden);
+
+      const desktopSidebarTriggerLabel = desktopSidebarTrigger.querySelector('.topbar-sidebar-trigger__label');
+
+      if (desktopSidebarTriggerLabel) {
+        desktopSidebarTriggerLabel.textContent = pageSidebarHidden ? 'Mostrar atalhos' : 'Ocultar atalhos';
+      }
+    }
+
     syncSidebarTooltips();
   };
 
@@ -392,8 +415,8 @@ function mountFlowSidebar() {
     if (compactSidebarQuery.matches) {
       pageSidebarOpen = !pageSidebarOpen;
     } else {
-      pageSidebarCollapsed = !pageSidebarCollapsed;
-      persistSidebarState(pageSidebarCollapsed);
+      pageSidebarHidden = !pageSidebarHidden;
+      persistSidebarState(pageSidebarHidden);
     }
 
     syncPageSidebar();
@@ -411,6 +434,7 @@ function mountFlowSidebar() {
 
   pageSidebarToggle?.addEventListener('click', togglePageSidebar);
   pageSidebarMobileTrigger?.addEventListener('click', togglePageSidebar);
+  desktopSidebarTrigger?.addEventListener('click', togglePageSidebar);
   pageSidebarBackdrop?.addEventListener('click', closePageSidebar);
 
   pageSidebar?.querySelectorAll('a').forEach((link) => {
@@ -1262,6 +1286,11 @@ function drawArrows() {
 }
 
 function showTooltip(event, code) {
+  if (!discTooltipHoverQuery.matches) {
+    hideTooltip();
+    return;
+  }
+
   const disc = activeCurriculum.discs[code];
   const prereqs = disc.prereqs.filter((item) => activeCurriculum.discs[item]).map((item) => activeCurriculum.discs[item].name);
   const unlocks = (activeCurriculum.unlocks[code] || [])
@@ -1291,6 +1320,10 @@ function showTooltip(event, code) {
 }
 
 function moveTooltip(event) {
+  if (!discTooltipHoverQuery.matches) {
+    return;
+  }
+
   const tooltip = document.getElementById('tooltip');
   const x = event.clientX + 14;
   const y = event.clientY - 10;
@@ -1302,6 +1335,20 @@ function moveTooltip(event) {
 
 function hideTooltip() {
   document.getElementById('tooltip').classList.remove('show');
+}
+
+if (typeof discTooltipHoverQuery.addEventListener === 'function') {
+  discTooltipHoverQuery.addEventListener('change', () => {
+    if (!discTooltipHoverQuery.matches) {
+      hideTooltip();
+    }
+  });
+} else if (typeof discTooltipHoverQuery.addListener === 'function') {
+  discTooltipHoverQuery.addListener(() => {
+    if (!discTooltipHoverQuery.matches) {
+      hideTooltip();
+    }
+  });
 }
 
 function redrawArrows() {

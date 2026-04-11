@@ -23,9 +23,9 @@
 })();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/pages/home.css?v=20260410x">
+<link rel="stylesheet" href="assets/css/pages/home.css?v=20260411b">
 </head>
-<body class="page-home" id="top">
+<body class="page-home sidebar-hidden" id="top">
 <div class="home-intro" id="home-intro" aria-hidden="true">
   <div class="home-intro__halo"></div>
   <div class="home-intro__inner">
@@ -79,8 +79,8 @@
           class="home-sidebar__toggle"
           id="home-sidebar-toggle"
           aria-controls="home-sidebar"
-          aria-expanded="true"
-          aria-label="Recolher atalhos"
+          aria-expanded="false"
+          aria-label="Mostrar atalhos"
         >
           <span class="home-sidebar__toggle-bar"></span>
           <span class="home-sidebar__toggle-bar"></span>
@@ -177,25 +177,6 @@
 <!-- HERO -->
 <div class="hero">
   <div class="hero-glow"></div>
-
-  <div class="hero-float hero-float--left">
-    <a href="pages/materiais.html" class="hero-float-card hero-float-card--featured hero-float-card--materials" aria-label="Abrir biblioteca de materiais">
-      <div class="hero-float-head">
-        <span class="hero-float-kicker">Mais acessado</span>
-        <span class="hero-float-icon">
-          <img src="assets/icons/book.svg" alt="" class="icon-svg icon-svg--float">
-        </span>
-      </div>
-      <h3 class="hero-float-title">Materiais do 1º período</h3>
-      <p class="hero-float-desc">Páginas das disciplinas, trilhas de estudo e apoio em um só lugar.</p>
-      <div class="hero-float-tags" aria-hidden="true">
-        <span class="hero-float-tag">Algoritmos</span>
-        <span class="hero-float-tag">Cálculo I</span>
-        <span class="hero-float-tag">Rotina de estudo</span>
-      </div>
-      <span class="hero-float-link" aria-hidden="true">Ver materiais →</span>
-    </a>
-  </div>
 
   <div class="hero-float hero-float--right">
     <a href="pages/fluxo.html" class="hero-float-card hero-float-card--flow" aria-label="Abrir página do fluxo curricular">
@@ -365,7 +346,7 @@
           <span class="fluxo-preview-link__chip">Abrir fluxo completo</span>
         </a>
       <iframe
-                  src="pages/fluxo.html?embed=home&v=20260410u"
+                  src="pages/fluxo.html?embed=home&v=20260411b"
         id="fluxo-iframe"
         class="fluxo-iframe"
         title="Fluxo Curricular Interativo"
@@ -439,7 +420,7 @@
   </div>
 </div>
 
-<script src="assets/js/pages/home.js?v=20260410u" defer></script>
+<script src="assets/js/pages/home.js?v=20260411a" defer></script>
 </body>
 </html>
 
