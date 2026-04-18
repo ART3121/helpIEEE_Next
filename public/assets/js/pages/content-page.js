@@ -18,6 +18,7 @@ const sidebarSpotlightRoute = {
 const contentPagePrimaryRoutes = [
   { href: 'primeiros-passos.html', label: 'Primeiros Passos', sidebarLabel: 'Primeiros Passos', file: 'primeiros-passos.html', meta: 'internet, RU, laboratórios e começo do semestre', icon: '../assets/icons/document.svg' },
   { href: 'faculdade.html', label: 'Funcionamento da Faculdade', sidebarLabel: 'Funcionamento da Faculdade', file: 'faculdade.html', meta: 'SIGA, IRA, RAG, glossário e regras da vida acadêmica', icon: '../assets/icons/faculty.svg' },
+  { href: 'materiais.html', label: 'Materiais', sidebarLabel: 'Materiais', file: 'materiais.html', matchPrefix: 'materiais-', meta: 'disciplinas, guias de estudo e apoio para o 1º período', icon: '../assets/icons/book.svg' },
   { href: 'fluxo.html', label: 'Fluxo Curricular', sidebarLabel: 'Fluxo Curricular', file: 'fluxo.html', meta: 'pré-requisitos, grades e visão de longo prazo do curso', icon: '../assets/icons/blueprint.svg' }
 ];
 

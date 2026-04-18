@@ -86,6 +86,7 @@ const flowSidebarSpotlightRoute = {
 const flowPrimaryRoutes = [
   { href: 'primeiros-passos.html', label: 'Primeiros Passos', meta: 'internet, RU, laboratórios e começo do semestre', icon: '../assets/icons/document.svg' },
   { href: 'faculdade.html', label: 'Funcionamento da Faculdade', meta: 'SIGA, IRA, RAG, glossário e regras da vida acadêmica', icon: '../assets/icons/faculty.svg' },
+  { href: 'materiais.html', label: 'Materiais', meta: 'disciplinas, guias de estudo e apoio para o 1º período', icon: '../assets/icons/book.svg' },
   { href: 'fluxo.html', label: 'Fluxo Curricular', meta: 'pré-requisitos, grades e visão de longo prazo do curso', icon: '../assets/icons/blueprint.svg', current: true }
 ];
 
